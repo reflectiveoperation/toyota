@@ -5,7 +5,7 @@
 
 ## Architecture Diagram
 
-![Alt text](toyota-test-architecture.jpg?raw=true "Architecture Diagram")
+![Alt text](toyota-test-architecture.jpg | width=100)
 
 ## About the solution
 
