@@ -7,21 +7,19 @@ import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MovieRatingProcessor {
 
-    @Value(value = "${kafka-connect.source-topic}")
-    private String sourceTopic;
-    final private static Serde<String> STRING_SERDE = Serdes.String();
-    final private static Serde<TitleRatingAvro> TITLE_RATING_SERDE = new TitleRatingSerde();
+    private final static Serde<String> STRING_SERDE = Serdes.String();
+    private final static Serde<TitleRatingAvro> TITLE_RATING_SERDE = new TitleRatingSerde();
 
+    public MovieRatingProcessor(String sourceTopic, StreamsBuilder streamsBuilder) {
+        buildTopology(sourceTopic, streamsBuilder);
+    }
 
-    @Autowired
-    void buildPipeline(StreamsBuilder streamsBuilder) {
+    public void buildTopology(String sourceTopic, StreamsBuilder streamsBuilder) {
         KStream<String, TitleRatingAvro> messageStream = streamsBuilder
                 .stream(sourceTopic, Consumed.with(STRING_SERDE, TITLE_RATING_SERDE));
 

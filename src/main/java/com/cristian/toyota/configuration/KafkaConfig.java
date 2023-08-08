@@ -1,5 +1,6 @@
 package com.cristian.toyota.configuration;
 
+import org.apache.kafka.streams.StreamsBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +8,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
+import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,8 @@ public class KafkaConfig {
 
     @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
+    @Value(value = "${kafka-connect.source-topic}")
+    private String sourceTopic;
 
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     KafkaStreamsConfiguration kStreamsConfig() {
@@ -33,5 +37,16 @@ public class KafkaConfig {
 
         return new KafkaStreamsConfiguration(props);
     }
+
+    @Bean(name = "kafka-topic")
+    String getKafkaTopic() {
+        return sourceTopic;
+    }
+//    @Bean(name = "streams-builder")
+//    StreamsBuilderFactoryBean getStreamsBuilder(KafkaStreamsConfiguration streamsConfig) {
+//        return new StreamsBuilderFactoryBean(streamsConfig);
+//    }
+
+
 
 }
