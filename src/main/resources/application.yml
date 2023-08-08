@@ -1,3 +1,7 @@
 spring:
   kafka:
     bootstrap-servers: "broker:29092"
+
+kafka-connect:
+  source-topic: "connect-file-pulse-imdb-tsv"
+
