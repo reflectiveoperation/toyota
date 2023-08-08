@@ -31,25 +31,12 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'false'
 
-  cp-schema-registry:
-    image: confluentinc/cp-schema-registry:6.0.1
-    hostname: schema-registry
-    container_name: schema-registry
-    depends_on:
-      - cp-zookeeper
-      - cp-broker
-    ports:
-      - "8081:8081"
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
 
   connect-file-pulse:
     image: streamthoughts/kafka-connect-file-pulse:2.5.0
     container_name: connect
     depends_on:
       - cp-broker
-      - cp-schema-registry
     ports:
       - "8083:8083"
       - "8000:8000"
@@ -66,16 +53,11 @@ services:
       CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
-      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
-      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      # kafka-connect-file-pulse is installed as a confluent-hub component
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components/"
       CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
-      # CONNECT_LOG4J_LOGGERS: io.streamthoughts=DEBUG,org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
-      # Uncomment for debugging the connector during development cycle
-      # KAFKA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n"
     volumes:
       - ./connect-data:/tmp/connect-data

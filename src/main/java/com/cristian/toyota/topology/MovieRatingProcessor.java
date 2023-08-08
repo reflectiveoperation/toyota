@@ -1,5 +1,8 @@
 package com.cristian.toyota.topology;
 
+import com.cristian.toyota.model.TitleRating;
+import com.cristian.toyota.model.TitleRatingAvro;
+import com.cristian.toyota.serdes.TitleRatingSerde;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -13,14 +16,17 @@ public class MovieRatingProcessor {
 
     @Value(value = "${kafka-connect.source-topic}")
     private String sourceTopic;
-    private static final Serde<String> STRING_SERDE = Serdes.String();
+    final private static Serde<String> STRING_SERDE = Serdes.String();
+    final private static Serde<TitleRatingAvro> TITLE_RATING_SERDE = new TitleRatingSerde();
+
 
     @Autowired
     void buildPipeline(StreamsBuilder streamsBuilder) {
-        KStream<String, String> messageStream = streamsBuilder
-                .stream(sourceTopic, Consumed.with(STRING_SERDE, STRING_SERDE));
+        KStream<String, TitleRatingAvro> messageStream = streamsBuilder
+                .stream(sourceTopic, Consumed.with(STRING_SERDE, TITLE_RATING_SERDE));
 
-        messageStream.peek((k, v) -> System.out.println(v))
-                .peek((k, v) -> System.out.println("KEY: " + k));
+        KStream<String, TitleRating> newStream = messageStream
+                .mapValues(v -> new TitleRating(v.getPayload().getMessage()))
+                .peek((k, v) -> System.out.println(v.getTconst()));
     }
 }

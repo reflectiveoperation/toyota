@@ -1,6 +1,5 @@
 package com.cristian.toyota.configuration;
 
-import org.apache.kafka.common.serialization.Serdes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.common.serialization.Serdes.String;
 import static org.apache.kafka.streams.StreamsConfig.*;
 
 @Configuration
@@ -26,10 +26,10 @@ public class KafkaConfig {
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     KafkaStreamsConfiguration kStreamsConfig() {
         Map<String, Object> props = new HashMap<>();
-        props.put(APPLICATION_ID_CONFIG, "streams-app");
+        props.put(APPLICATION_ID_CONFIG, "streams-app3");
         props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        props.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-        props.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+        props.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, String().getClass().getName());
+        props.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, String().getClass().getName());
 
         return new KafkaStreamsConfiguration(props);
     }
