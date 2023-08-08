@@ -10,7 +10,7 @@ import org.apache.kafka.common.serialization.Serializer;
 import java.io.IOException;
 
 
-public class TitleRatingSerde implements Serde<TitleRatingAvro> {
+public class TitleRatingAvroSerde implements Serde<TitleRatingAvro> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 

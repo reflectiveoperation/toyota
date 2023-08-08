@@ -15,13 +15,13 @@ import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TitleRatingSerdeTest {
+class TitleRatingAvroSerdeTest {
 
-    private TitleRatingSerde underTest;
+    private TitleRatingAvroSerde underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new TitleRatingSerde();
+        underTest = new TitleRatingAvroSerde();
     }
 
     @AfterEach

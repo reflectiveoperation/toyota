@@ -42,11 +42,6 @@ public class KafkaConfig {
     String getKafkaTopic() {
         return sourceTopic;
     }
-//    @Bean(name = "streams-builder")
-//    StreamsBuilderFactoryBean getStreamsBuilder(KafkaStreamsConfiguration streamsConfig) {
-//        return new StreamsBuilderFactoryBean(streamsConfig);
-//    }
-
 
 
 }
