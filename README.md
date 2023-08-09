@@ -12,7 +12,7 @@
 This project contains a containerised Kafka broker and a Spring Boot app that produces and consumes messages from the 
 broker. In turn, the broker consumes messages from Kafka Connect which is configured to read data from a CSV file by
 using the FilePulse connector. The Kafka Streams application uses a Topology which is configured to established movie
-ratings by calculating the average rating for each movie. The average rating is then published to the `average-ratings`
+average number of votes by calculating the votes for each movie. The average rating is then published to the `average-votes`
 topic from the Streams state store.
 
 ## How to run
