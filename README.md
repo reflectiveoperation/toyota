@@ -21,9 +21,9 @@ topic from the Streams state store.
 - Run `docker-compose up`
 - Run `./initialise-connector.sh`
 - Start Spring Boot app
-- Consume messages from the `average-ratings` topic by executing the following command
+- Consume messages from the `average-votes` topic by executing the following command
 ```
-docker exec -it connect kafka-console-consumer --topic average-ratings --from-beginning --bootstrap-server broker:29092 
+docker exec -it connect kafka-console-consumer --topic average-votes --from-beginning --bootstrap-server broker:29092 
 --property "print.key=true" --property "key.deserializer=org.apache.kafka.common.serialization.StringDeserializer" 
 --property "value.deserializer=org.apache.kafka.common.serialization.DoubleDeserializer"
 ```
