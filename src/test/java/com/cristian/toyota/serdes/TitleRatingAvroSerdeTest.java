@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class TitleRatingAvroSerdeTest {
 
@@ -37,5 +38,15 @@ class TitleRatingAvroSerdeTest {
         TitleRatingAvro actual = underTest.deserializer().deserialize("some-topic", correctJson);
 
         assertThat(actual.getPayload().getMessage()).isEqualTo(expectedMessage);
+    }
+
+    @Test
+    @DisplayName("Incorrect JSON Throws Exception")
+    void serializerThrowsExceptionWithIncorrectData() throws IOException {
+        Path path = Paths.get("src/test/resources/title-rating-avro-event-incorrect.json");
+        byte[] incorrectJson = Files.readAllBytes(path);
+
+        assertThatThrownBy(() -> underTest.deserializer().deserialize("some-topic", incorrectJson))
+                .isInstanceOf(RuntimeException.class);
     }
 }

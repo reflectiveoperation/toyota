@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class MovieRatingProcessor {
 
     private final static Serde<String> STRING_SERDE = Serdes.String();
-    private final static Serde<TitleRatingAvro> TITLE_RATING_SERDE = new TitleRatingAvroSerde();
+    private final static Serde<TitleRatingAvro> TITLE_RATING_AVRO_SERDE = new TitleRatingAvroSerde();
     private final static CountAndSumSerde COUNT_AND_SUM_SERDE = new CountAndSumSerde();
 
     public MovieRatingProcessor(String sourceTopic, StreamsBuilder streamsBuilder) {
@@ -30,7 +30,7 @@ public class MovieRatingProcessor {
      * This topology initially maps the incoming stream of TitleRatingAvro to a stream of TitleRating.
      * Then it filters out all the movies with less than 500 votes.
      * After that it groups the stream by tconst (Key) and aggregates the number of votes.
-     * Finally, it aggregates the number of votes by tconst and calculates the average rating.
+     * Finally, it aggregates the number of votes by tconst and calculates the average number of votes.
      *
      * Given more time, I would have implemented a transformer to calculate
      * (numVotes/averageNumberOfVotes) * averageRating.
@@ -40,7 +40,7 @@ public class MovieRatingProcessor {
      */
     public void buildTopology(String sourceTopic, StreamsBuilder streamsBuilder) {
         final KStream<String, TitleRating> titleRatingStream = streamsBuilder
-                .stream(sourceTopic, Consumed.with(STRING_SERDE, TITLE_RATING_SERDE))
+                .stream(sourceTopic, Consumed.with(STRING_SERDE, TITLE_RATING_AVRO_SERDE))
                 .mapValues(value -> new TitleRating(value.getPayload().getMessage()))
                 .filter((key, value) -> value.getNumVotes() > 500);
 
@@ -48,7 +48,7 @@ public class MovieRatingProcessor {
                 .map((key, rating) -> new KeyValue<>(rating.getTconst(), rating.getNumVotes()))
                 .groupByKey(Grouped.with(STRING_SERDE, Serdes.Integer()));
 
-        final KTable<String, CountAndSum> ratingCountAndSum =
+        final KTable<String, CountAndSum> votesCountAndSum =
                 numberOfVotesById.aggregate(() -> new CountAndSum(0L, 0.0),
                 (key, value, aggregate) -> {
                     aggregate.setCount(aggregate.getCount() + 1);
@@ -58,17 +58,14 @@ public class MovieRatingProcessor {
                         .withKeySerde(STRING_SERDE)
                         .withValueSerde(COUNT_AND_SUM_SERDE));
 
-        final KTable<String, Double> ratingAverage =
-                ratingCountAndSum.mapValues(value -> value.getSum() / value.getCount(),
-                        Materialized.<String, Double, KeyValueStore<Bytes, byte[]>>as("average-ratings")
+        final KTable<String, Double> votesAverage =
+                votesCountAndSum.mapValues(value -> value.getSum() / value.getCount(),
+                        Materialized.<String, Double, KeyValueStore<Bytes, byte[]>>as("average-votes")
                                 .withKeySerde(STRING_SERDE)
                                 .withValueSerde(Serdes.Double()));
 
-        ratingAverage.toStream().to("average-ratings", Produced.with(STRING_SERDE, Serdes.Double()));
-
+        votesAverage.toStream().to("average-votes", Produced.with(STRING_SERDE, Serdes.Double()));
 
         streamsBuilder.build();
-
-
     }
 }

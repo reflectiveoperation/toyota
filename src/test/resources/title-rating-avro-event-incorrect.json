@@ -1,0 +1,1 @@
+{"schema":{"type":"struct","fields":[{"type":"array","items":{"type":"string","optional":true},"optional":true,"field":"headers"},{"type":"string","optional":true,"field":"message"}],"optional":false},"something-else":{"notcorrecteither":["tconst\taverageRating\tnumVotes"],"notcorrect":"tt0037688\t6.7\t482"}}

@@ -51,10 +51,19 @@
             <version>2.15.2</version>
         </dependency>
 
+        <!-- Test Dependencies -->
+
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.24.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams-test-utils</artifactId>
+            <version>3.5.1</version>
             <scope>test</scope>
         </dependency>
 
